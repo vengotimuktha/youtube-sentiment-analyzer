@@ -53,7 +53,7 @@ def clean_text(text):
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
 bert_model_path = "model/fine_tuned_bert"
-drive_folder_url = "https://drive.google.com/drive/folders/14WVDETYh6oNS_G1b1vdBGxQmm04jVhdu"
+drive_folder_url = "https://drive.google.com/drive/folders/14WVDETYh6oNS_G1b1vdBGxQmm04jVhdu?usp=drive_link"
 
 if not os.path.exists(bert_model_path):
     os.makedirs(bert_model_path, exist_ok=True)
