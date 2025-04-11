@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import torch
 import os
+import gdown
 import matplotlib.pyplot as plt
 from transformers import AutoTokenizer, BertForSequenceClassification
 from sklearn.preprocessing import LabelEncoder
@@ -52,6 +53,11 @@ def clean_text(text):
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
 bert_model_path = "model/fine_tuned_bert"
+drive_folder_url = "https://drive.google.com/drive/folders/14WVDETYh6oNS_G1b1vdBGxQmm04jVhdu"
+
+if not os.path.exists(bert_model_path):
+    os.makedirs(bert_model_path, exist_ok=True)
+    gdown.download_folder(url=drive_folder_url, output=bert_model_path, quiet=False, use_cookies=False)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
 bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
