@@ -1,0 +1,23 @@
+# Ignore Python & Model-related files
+venv*/
+__pycache__/
+*.pkl
+*.pt
+*.npy
+*.h5
+*.dll
+*.lib
+*.so
+*.model
+*.log
+*.csv
+*.json
+*.html
+*.env
+
+# Ignore folders with model artifacts
+captum_env/
+model/
+logs/
+lime_outputs/
+assets/
