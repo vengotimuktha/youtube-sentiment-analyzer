@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import torch
 import os
+import requests
 import gdown
 import matplotlib.pyplot as plt
 from transformers import AutoTokenizer, BertForSequenceClassification
@@ -10,6 +11,8 @@ from sklearn.preprocessing import LabelEncoder
 import csv
 from datetime import datetime
 from scipy.special import softmax
+
+
 
 
 # -----------------------------
@@ -52,19 +55,34 @@ def clean_text(text):
 # -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
+# Define model path
 bert_model_path = "model/fine_tuned_bert"
-drive_folder_url = "https://drive.google.com/drive/folders/14WVDETYh6oNS_G1b1vdBGxQmm04jVhdu"
+os.makedirs(bert_model_path, exist_ok=True)
 
-# Download only if the model folder does not exist
-if not os.path.exists(bert_model_path):
-    os.makedirs(bert_model_path, exist_ok=True)
-    gdown.download_folder(url=drive_folder_url, output=bert_model_path, quiet=False, use_cookies=False)
+# Download files individually if missing
+model_files = {
+    "config.json": "1DtzGHqM28TO0z29bRmMvScQzt9rru4dL",
+    "model.safetensors": "1e2vqRZ3Z1XopG0U_o2ufFlx5wOLJLSVd",
+    "tokenizer_config.json": "1k7UwI2GjsdEoVXySSzzU7gYzvbhuDAiF",
+    "vocab.txt": "1uqFxUgSRsDRQKi5f2upMlCzRtIXTARvD",
+    "special_tokens_map.json": "1aqqX0D5l9TTms4KhZni9JCK8E5rEBjUo"
+}
+
+for filename, file_id in model_files.items():
+    file_path = os.path.join(bert_model_path, filename)
+    if not os.path.exists(file_path):
+        print(f"Downloading {filename}...")
+        url = f"https://drive.google.com/uc?export=download&id={file_id}"
+        response = requests.get(url)
+        with open(file_path, "wb") as f:
+            f.write(response.content)
 
 # Load model and tokenizer
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
 bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 
+# Prediction function
 def predict_proba_bert(texts, batch_size=32):
     all_probs = []
     for i in range(0, len(texts), batch_size):
