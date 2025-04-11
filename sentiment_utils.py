@@ -52,12 +52,13 @@ def clean_text(text):
 # -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
-bert_model_path = "fine_tuned_bert"
+bert_model_path = "model/fine_tuned_bert"
 drive_folder_url = "https://drive.google.com/drive/folders/14WVDETYh6oNS_G1b1vdBGxQmm04jVhdu"
 
 if not os.path.exists(bert_model_path):
     os.makedirs(bert_model_path, exist_ok=True)
     gdown.download_folder(url=drive_folder_url, output=bert_model_path, quiet=False, use_cookies=False)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
 bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
