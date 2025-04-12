@@ -73,7 +73,7 @@ model_files = {
     "pytorch_model.bin": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
     "tokenizer_config.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI",
     "vocab.txt": "1DDCgUUv54PchwRYLBXNvZJ6j7yoZYyIB",
-    "special_tokens_map.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI"
+    "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
 }
 
 # Utility function to download from Google Drive
