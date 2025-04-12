@@ -55,11 +55,11 @@ def clean_text(text):
 # -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
-# Define model path
+# Step 1: Setup local model folder
 bert_model_path = "model/fine_tuned_bert"
 os.makedirs(bert_model_path, exist_ok=True)
 
-# Google Drive file IDs
+# Step 2: Google Drive file IDs
 model_files = {
     "config.json": "1DtzGHqM28TO0z29bRmMvScQzt9rru4dL",
     "model.safetensors": "1e2vqRZ3Z1XopG0U_o2ufFlx5wOLJLSVd",
@@ -68,16 +68,18 @@ model_files = {
     "special_tokens_map.json": "1aqqX0D5l9TTms4KhZni9JCK8E5rEBjUo"
 }
 
-# Download if missing
+# Step 3: Download files only if missing
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
-        print(f"Downloading {filename}...")
+        print(f"🔽 Downloading {filename}...")
         url = f"https://drive.google.com/uc?export=download&id={file_id}"
-        response = requests.get(url)
-        with open(file_path, "wb") as f:
-            f.write(response.content)
-
+        r = requests.get(url)
+        if r.status_code == 200:
+            with open(file_path, "wb") as f:
+                f.write(r.content)
+        else:
+            raise RuntimeError(f"Failed to download {filename} from Google Drive")
 # Load the model and tokenizer
 from transformers import AutoTokenizer, BertForSequenceClassification
 import torch
