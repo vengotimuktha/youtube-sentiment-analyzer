@@ -62,7 +62,7 @@ os.makedirs(bert_model_path, exist_ok=True)
 
 model_files = {
     "config.json": "1tMmULEYq-_4qak5ZP872MFcJruFKS8-Y",
-    "model.safetensors": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
+    "pytorch_model.bin": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
     "tokenizer_config.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI",
     "vocab.txt": "1DDCgUUv54PchwRYLBXNvZJ6j7yoZYyIB",
     "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
