@@ -68,23 +68,17 @@ model_files = {
     "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
 }
 
-# Function to download files if not already present
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
-        print(f"Downloading {filename} from Google Drive...")
+        print(f"Downloading {filename}...")
         url = f"https://drive.google.com/uc?export=download&id={file_id}"
         response = requests.get(url)
-        if response.status_code == 200:
-            with open(file_path, "wb") as f:
-                f.write(response.content)
-        else:
-            raise Exception(f"Failed to download {filename}. Check your file ID or permissions.")
+        with open(file_path, "wb") as f:
+            f.write(response.content)
 
-
-
+# Load model and tokenizer
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
 bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 
