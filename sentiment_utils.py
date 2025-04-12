@@ -5,6 +5,7 @@ import torch
 import os
 import requests
 import gdown
+import streamlit as st
 import matplotlib.pyplot as plt
 from transformers import AutoTokenizer, BertForSequenceClassification
 from sklearn.preprocessing import LabelEncoder
@@ -86,9 +87,11 @@ for filename, file_id in model_files.items():
 
 # Check for missing files
 required_files = list(model_files.keys())
+# Add print before raising error
 missing = [f for f in required_files if not os.path.exists(os.path.join(bert_model_path, f))]
 if missing:
-    raise FileNotFoundError(f"🚫 Missing model files: {missing}. Ensure Git LFS pulled them correctly on deployment.")
+    st.error(f"🚫 Model files missing in Streamlit Cloud: {missing}")
+    raise FileNotFoundError(f"Missing: {missing}")
 
 # Load model and tokenizer using local files only
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
