@@ -17,7 +17,8 @@ __pycache__/
 
 # Ignore folders with model artifacts
 captum_env/
-model/
 logs/
 lime_outputs/
+model/bert_sentiment/
+
 assets/
