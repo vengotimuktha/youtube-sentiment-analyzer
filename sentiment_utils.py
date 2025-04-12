@@ -59,7 +59,7 @@ def clean_text(text):
 bert_model_path = "model/fine_tuned_bert"
 os.makedirs(bert_model_path, exist_ok=True)
 
-# Download files individually if missing
+# Google Drive file IDs
 model_files = {
     "config.json": "1DtzGHqM28TO0z29bRmMvScQzt9rru4dL",
     "model.safetensors": "1e2vqRZ3Z1XopG0U_o2ufFlx5wOLJLSVd",
@@ -68,6 +68,7 @@ model_files = {
     "special_tokens_map.json": "1aqqX0D5l9TTms4KhZni9JCK8E5rEBjUo"
 }
 
+# Download if missing
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
@@ -77,7 +78,11 @@ for filename, file_id in model_files.items():
         with open(file_path, "wb") as f:
             f.write(response.content)
 
-# Load model and tokenizer
+# Load the model and tokenizer
+from transformers import AutoTokenizer, BertForSequenceClassification
+import torch
+from scipy.special import softmax
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
 bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
