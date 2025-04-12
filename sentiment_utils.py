@@ -60,61 +60,50 @@ import os
 import requests
 import torch
 import numpy as np
-from transformers import AutoTokenizer, BertForSequenceClassification
+from transformers import BertForSequenceClassification, AutoTokenizer
 from scipy.special import softmax
 
+# Create the model path if it doesn't exist
 bert_model_path = "model/fine_tuned_bert"
 os.makedirs(bert_model_path, exist_ok=True)
 
-# Define required files and their Google Drive file IDs (for local fallback use)
+# Replace these with your actual Google Drive file IDs
 model_files = {
     "config.json": "1tMmULEYq-_4qak5ZP872MFcJruFKS8-Y",
     "pytorch_model.bin": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
     "tokenizer_config.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI",
     "vocab.txt": "1DDCgUUv54PchwRYLBXNvZJ6j7yoZYyIB",
-    "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
+    "special_tokens_map.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI"
 }
 
-# Optional fallback downloader — works locally but is skipped in cloud when files are present
+# Utility function to download from Google Drive
+def download_file_from_gdrive(file_id, destination):
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(destination, "wb") as f:
+            f.write(response.content)
+        print(f"✅ Downloaded: {destination}")
+    except Exception as e:
+        raise RuntimeError(f"❌ Failed to download {destination} from Google Drive. Error: {e}")
+
+# Download all model files if they don’t already exist
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
-        print(f"📥 Downloading {filename} from Google Drive...")
-        url = f"https://drive.google.com/uc?export=download&id={file_id}"
-        response = requests.get(url)
-        with open(file_path, "wb") as f:
-            f.write(response.content)
+        print(f"📦 Downloading {filename}...")
+        download_file_from_gdrive(file_id, file_path)
 
-# Check for missing files
-required_files = list(model_files.keys())
-missing = [f for f in required_files if not os.path.exists(os.path.join(bert_model_path, f))]
-if missing:
-    print(f"🚫 Streamlit is missing the following model files: {missing}")
-    raise RuntimeError(f"Model loading failed. Files missing: {missing}")
-
-
-# Load model and tokenizer using local files only
+# Load model and tokenizer
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 try:
-    bert_model = BertForSequenceClassification.from_pretrained(
-        bert_model_path,
-        local_files_only=True
-    ).to(device)
-except OSError as e:
-    raise RuntimeError(
-        f"❌ Failed to load BERT model from '{bert_model_path}'. "
-        f"This is likely due to corrupted or missing files. Error: {e}"
-    )
+    bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
+    bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
+except Exception as e:
+    raise RuntimeError(f"❌ Failed to load BERT model or tokenizer. Error: {e}")
 
-bert_tokenizer = AutoTokenizer.from_pretrained(
-    bert_model_path,
-    local_files_only=True
-)
-
-# -----------------------------
-# 3. PREDICT PROBABILITIES FROM TEXTS
-# -----------------------------
 def predict_proba_bert(texts, batch_size=32):
     all_probs = []
     for i in range(0, len(texts), batch_size):

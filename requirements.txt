@@ -1,12 +1,13 @@
 streamlit
 transformers
 torch
+sentence-transformers
 scikit-learn
 xgboost
-sentence-transformers
 pandas
 numpy
 matplotlib
+seaborn
 shap
 lime
 captum
@@ -14,8 +15,5 @@ nltk
 regex
 tqdm
 joblib
-seaborn
-ipython
 gdown
 safetensors
-git+https://github.com/git-lfs/git-lfs
