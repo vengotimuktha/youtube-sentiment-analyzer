@@ -80,13 +80,12 @@ model_files = {
 def download_file_from_gdrive(file_id, destination):
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        with open(destination, "wb") as f:
-            f.write(response.content)
-        print(f"✅ Downloaded: {destination}")
+       print("📁 Contents of model folder:", os.listdir(bert_model_path))  # show files
+       bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
+       bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
     except Exception as e:
-        raise RuntimeError(f"❌ Failed to download {destination} from Google Drive. Error: {e}")
+        print("❌ Model loading error:", e)  # show full error
+        raise RuntimeError(f"❌ Failed to load BERT model or tokenizer. Error: {e}")
 
 # Download all model files if they don’t already exist
 for filename, file_id in model_files.items():
