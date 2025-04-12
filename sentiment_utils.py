@@ -55,41 +55,40 @@ def clean_text(text):
 # -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
-# Step 1: Setup local model folder
+# Path where model will be stored locally
 bert_model_path = "model/fine_tuned_bert"
 os.makedirs(bert_model_path, exist_ok=True)
 
-# Step 2: Google Drive file IDs
+
 model_files = {
-    "config.json": "1DtzGHqM28TO0z29bRmMvScQzt9rru4dL",
-    "model.safetensors": "1e2vqRZ3Z1XopG0U_o2ufFlx5wOLJLSVd",
-    "tokenizer_config.json": "1k7UwI2GjsdEoVXySSzzU7gYzvbhuDAiF",
-    "vocab.txt": "1uqFxUgSRsDRQKi5f2upMlCzRtIXTARvD",
-    "special_tokens_map.json": "1aqqX0D5l9TTms4KhZni9JCK8E5rEBjUo"
+    "config.json": "1tMmULEYq-_4qak5ZP872MFcJruFKS8-Y",
+    "model.safetensors": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
+    "tokenizer_config.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI",
+    "vocab.txt": "1DDCgUUv54PchwRYLBXNvZJ6j7yoZYyIB",
+    "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
 }
 
-# Step 3: Download files only if missing
+# Function to download files if not already present
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
-        print(f"🔽 Downloading {filename}...")
+        print(f"Downloading {filename} from Google Drive...")
         url = f"https://drive.google.com/uc?export=download&id={file_id}"
-        r = requests.get(url)
-        if r.status_code == 200:
+        response = requests.get(url)
+        if response.status_code == 200:
             with open(file_path, "wb") as f:
-                f.write(r.content)
+                f.write(response.content)
         else:
-            raise RuntimeError(f"Failed to download {filename} from Google Drive")
-# Load the model and tokenizer
-from transformers import AutoTokenizer, BertForSequenceClassification
-import torch
-from scipy.special import softmax
+            raise Exception(f"Failed to download {filename}. Check your file ID or permissions.")
+
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
 bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 
-# Prediction function
+
 def predict_proba_bert(texts, batch_size=32):
     all_probs = []
     for i in range(0, len(texts), batch_size):
