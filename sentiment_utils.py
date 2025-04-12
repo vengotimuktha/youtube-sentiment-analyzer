@@ -63,46 +63,54 @@ import numpy as np
 from transformers import BertForSequenceClassification, AutoTokenizer
 from scipy.special import softmax
 
-# Create the model path if it doesn't exist
+# Path to model directory
 bert_model_path = "model/fine_tuned_bert"
 os.makedirs(bert_model_path, exist_ok=True)
 
-# Replace these with your actual Google Drive file IDs
+# ✅ Google Drive file IDs (ensure these are correct and shared)
 model_files = {
     "config.json": "1tMmULEYq-_4qak5ZP872MFcJruFKS8-Y",
-    "pytorch_model.bin": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
+    "model.safetensors": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
     "tokenizer_config.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI",
     "vocab.txt": "1DDCgUUv54PchwRYLBXNvZJ6j7yoZYyIB",
     "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
 }
 
-# Utility function to download from Google Drive
+# ✅ Download from Google Drive if file doesn't exist
 def download_file_from_gdrive(file_id, destination):
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
     try:
-       print("📁 Contents of model folder:", os.listdir(bert_model_path))  # show files
-       bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
-       bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(destination, "wb") as f:
+            f.write(response.content)
+        print(f"✅ Downloaded: {destination}")
     except Exception as e:
-        print("❌ Model loading error:", e)  # show full error
-        raise RuntimeError(f"❌ Failed to load BERT model or tokenizer. Error: {e}")
+        raise RuntimeError(f"❌ Failed to download {destination}. Error: {e}")
 
-# Download all model files if they don’t already exist
+# ✅ Download all required files if not already present
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
         print(f"📦 Downloading {filename}...")
         download_file_from_gdrive(file_id, file_path)
 
-# Load model and tokenizer
+# ✅ Load the model and tokenizer from the safetensors file
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 try:
-    bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
+    print("📁 Contents of model folder:", os.listdir(bert_model_path))
+    bert_model = BertForSequenceClassification.from_pretrained(
+        bert_model_path,
+        weights_name="model.safetensors",  # explicitly load safetensors file
+        trust_remote_code=True             # allow safetensors loading
+    ).to(device)
     bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 except Exception as e:
+    print("❌ Model loading error:", e)
     raise RuntimeError(f"❌ Failed to load BERT model or tokenizer. Error: {e}")
 
+# ✅ Function to predict probabilities for a list of texts
 def predict_proba_bert(texts, batch_size=32):
     all_probs = []
     for i in range(0, len(texts), batch_size):
@@ -113,7 +121,6 @@ def predict_proba_bert(texts, batch_size=32):
             probs = softmax(outputs.logits.cpu().numpy(), axis=1)
             all_probs.extend(probs)
     return np.array(all_probs)
-
 
 # -----------------------------
 # 3. SINGLE TEXT PREDICTION
