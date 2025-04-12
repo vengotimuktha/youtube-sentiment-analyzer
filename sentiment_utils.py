@@ -99,16 +99,18 @@ for filename, file_id in model_files.items():
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 try:
-    print("📁 Contents of model folder:", os.listdir(bert_model_path))
+    print("📁 Model folder contents:", os.listdir(bert_model_path))
     bert_model = BertForSequenceClassification.from_pretrained(
         bert_model_path,
-        weights_name="model.safetensors",  # explicitly load safetensors file
-        trust_remote_code=True             # allow safetensors loading
+        weights_name="model.safetensors",
+        trust_remote_code=True
     ).to(device)
     bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 except Exception as e:
-    print("❌ Model loading error:", e)
+    import traceback
+    print("❌ FULL TRACEBACK:\n", traceback.format_exc())  # show full cause
     raise RuntimeError(f"❌ Failed to load BERT model or tokenizer. Error: {e}")
+
 
 # ✅ Function to predict probabilities for a list of texts
 def predict_proba_bert(texts, batch_size=32):
