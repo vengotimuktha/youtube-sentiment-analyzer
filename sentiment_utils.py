@@ -55,11 +55,17 @@ def clean_text(text):
 # -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
-# Path where model will be stored locally
+import os
+import requests
+import torch
+import numpy as np
+from transformers import AutoTokenizer, BertForSequenceClassification
+from scipy.special import softmax
+
 bert_model_path = "model/fine_tuned_bert"
 os.makedirs(bert_model_path, exist_ok=True)
 
-
+# Define required files and their Google Drive file IDs (for local fallback use)
 model_files = {
     "config.json": "1tMmULEYq-_4qak5ZP872MFcJruFKS8-Y",
     "pytorch_model.bin": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
@@ -68,21 +74,44 @@ model_files = {
     "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
 }
 
+# Optional fallback downloader — works locally but is skipped in cloud when files are present
 for filename, file_id in model_files.items():
     file_path = os.path.join(bert_model_path, filename)
     if not os.path.exists(file_path):
-        print(f"Downloading {filename}...")
+        print(f"📥 Downloading {filename} from Google Drive...")
         url = f"https://drive.google.com/uc?export=download&id={file_id}"
         response = requests.get(url)
         with open(file_path, "wb") as f:
             f.write(response.content)
 
-# Load model and tokenizer
+# Check for missing files
+required_files = list(model_files.keys())
+missing = [f for f in required_files if not os.path.exists(os.path.join(bert_model_path, f))]
+if missing:
+    raise FileNotFoundError(f"🚫 Missing model files: {missing}. Ensure Git LFS pulled them correctly on deployment.")
+
+# Load model and tokenizer using local files only
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-bert_model = BertForSequenceClassification.from_pretrained(bert_model_path).to(device)
-bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 
+try:
+    bert_model = BertForSequenceClassification.from_pretrained(
+        bert_model_path,
+        local_files_only=True
+    ).to(device)
+except OSError as e:
+    raise RuntimeError(
+        f"❌ Failed to load BERT model from '{bert_model_path}'. "
+        f"This is likely due to corrupted or missing files. Error: {e}"
+    )
 
+bert_tokenizer = AutoTokenizer.from_pretrained(
+    bert_model_path,
+    local_files_only=True
+)
+
+# -----------------------------
+# 3. PREDICT PROBABILITIES FROM TEXTS
+# -----------------------------
 def predict_proba_bert(texts, batch_size=32):
     all_probs = []
     for i in range(0, len(texts), batch_size):
@@ -93,6 +122,7 @@ def predict_proba_bert(texts, batch_size=32):
             probs = softmax(outputs.logits.cpu().numpy(), axis=1)
             all_probs.extend(probs)
     return np.array(all_probs)
+
 
 # -----------------------------
 # 3. SINGLE TEXT PREDICTION
