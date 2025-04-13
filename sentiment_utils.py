@@ -150,6 +150,9 @@ from captum.attr import IntegratedGradients, visualization
 from IPython.core.display import display, HTML  # Needed for HTML rendering outside notebooks
 
 def explain_with_captum(text, model, tokenizer, device):
+    """
+    Generate attributions for text prediction and return HTML visualization compatible with Streamlit.
+    """
     inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
     input_ids = inputs["input_ids"].to(device)
     attention_mask = inputs["attention_mask"].to(device)
@@ -177,23 +180,43 @@ def explain_with_captum(text, model, tokenizer, device):
     )
 
     tokens = tokenizer.convert_ids_to_tokens(input_ids[0])
-    tokens = [t for t in tokens if t not in ("[CLS]", "[SEP]")]
-
     attributions_sum = attributions.sum(dim=-1).squeeze(0)
     attributions_sum = attributions_sum[:len(tokens)]
     attributions_sum = attributions_sum / torch.norm(attributions_sum)
 
-    vis_data = visualization.VisualizationDataRecord(
-        word_attributions=attributions_sum.detach().cpu().numpy(),
-        pred_prob=probs[0][pred_class].item(),
-        pred_class=pred_class,
-        true_class=pred_class,
-        attr_class="Predicted",
-        attr_score=attributions_sum.sum().item(),
-        raw_input_ids=tokens,
-        convergence_score=delta.sum().item()
-    )
+    # Create custom HTML visualization
+    html = create_word_attributions_html(tokens, attributions_sum.detach().cpu().numpy(), 
+                                        pred_class, probs[0][pred_class].item())
+    return html
 
-    # ✅ Return HTML string explicitly
-    html = visualization.visualize_text([vis_data])._repr_html_()
+def create_word_attributions_html(tokens, attributions, pred_class, pred_prob):
+    """
+    Create a custom HTML visualization for word attributions without using IPython.
+    """
+    # Map sentiment classes to readable format
+    class_names = {0: "Positive", 1: "Negative", 2: "Neutral"}
+    pred_class_name = class_names.get(pred_class, f"Class {pred_class}")
+    
+    # Create the HTML header
+    html = f"""
+    <div style="background-color:#f8f9fa; padding:20px; border-radius:5px; margin-bottom:20px">
+        <h3>Prediction: {pred_class_name} (Confidence: {pred_prob:.4f})</h3>
+        <div>
+    """
+    
+    # Generate the colored text
+    for token, attribution in zip(tokens, attributions):
+        if token in ("[CLS]", "[SEP]", "[PAD]"):
+            continue
+            
+        # Scale the attribution for color intensity
+        # Positive attributions (blue) and negative attributions (red)
+        if attribution > 0:
+            color = f"rgba(0, 0, 255, {min(abs(attribution * 3), 1)})"
+        else:
+            color = f"rgba(255, 0, 0, {min(abs(attribution * 3), 1)})"
+            
+        html += f'<span style="background-color:{color}; padding:2px; margin:1px; border-radius:3px">{token}</span> '
+    
+    html += "</div></div>"
     return html
