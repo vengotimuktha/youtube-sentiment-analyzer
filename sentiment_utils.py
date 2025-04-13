@@ -149,19 +149,19 @@ def log_flagged_comment(original_text, cleaned_text, match_type, source="single"
 from captum.attr import IntegratedGradients, visualization
 from captum.attr import visualization as viz
 
-def explain_with_captum(text):
-    inputs = bert_tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+def explain_with_captum(text, model, tokenizer, device):
+    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
     input_ids = inputs["input_ids"].to(device)
     attention_mask = inputs["attention_mask"].to(device)
 
     def get_embeddings(input_ids):
-        return bert_model.bert.embeddings.word_embeddings(input_ids)
+        return model.bert.embeddings.word_embeddings(input_ids)
 
     input_embed = get_embeddings(input_ids)
     baseline_embed = torch.zeros_like(input_embed)
 
     def forward_func(embeddings):
-        output = bert_model(inputs_embeds=embeddings, attention_mask=attention_mask)
+        output = model(inputs_embeds=embeddings, attention_mask=attention_mask)
         return torch.softmax(output.logits, dim=1)
 
     with torch.no_grad():
@@ -176,14 +176,14 @@ def explain_with_captum(text):
         return_convergence_delta=True
     )
 
-    tokens = bert_tokenizer.convert_ids_to_tokens(input_ids[0])
+    tokens = tokenizer.convert_ids_to_tokens(input_ids[0])
     tokens = [t for t in tokens if t not in ("[CLS]", "[SEP]")]
 
     attributions_sum = attributions.sum(dim=-1).squeeze(0)
     attributions_sum = attributions_sum[:len(tokens)]
     attributions_sum = attributions_sum / torch.norm(attributions_sum)
 
-    vis_data = viz.VisualizationDataRecord(
+    vis_data = visualization.VisualizationDataRecord(
         word_attributions=attributions_sum.detach().cpu().numpy(),
         pred_prob=probs[0][pred_class].item(),
         pred_class=pred_class,
@@ -194,4 +194,6 @@ def explain_with_captum(text):
         convergence_score=delta.sum().item()
     )
 
-    return viz.visualize_text([vis_data])._repr_html_()
+    # ✅ Return HTML string explicitly
+    html = visualization.visualize_text([vis_data])._repr_html_()
+    return html
