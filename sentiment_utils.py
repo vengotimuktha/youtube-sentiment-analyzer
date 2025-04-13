@@ -147,7 +147,7 @@ def log_flagged_comment(original_text, cleaned_text, match_type, source="single"
 # 6. CAPTUM EXPLANATION
 # -----------------------------
 from captum.attr import IntegratedGradients, visualization
-from captum.attr import visualization as viz
+from IPython.core.display import display, HTML  # Needed for HTML rendering outside notebooks
 
 def explain_with_captum(text, model, tokenizer, device):
     inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
