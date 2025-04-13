@@ -13,9 +13,6 @@ import csv
 from datetime import datetime
 from scipy.special import softmax
 
-
-
-
 # -----------------------------
 # 0. LOAD BAD WORD LISTS
 # -----------------------------
@@ -53,19 +50,10 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-## -----------------------------
+# -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
-import os
-import torch
-import numpy as np
-from transformers import BertForSequenceClassification, AutoTokenizer
-from scipy.special import softmax
-
-# Path to model directory
 bert_model_path = "model/fine_tuned_bert"
-
-# ✅ Load the model and tokenizer from GitHub repo (Git LFS)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 try:
@@ -91,7 +79,6 @@ def predict_proba_bert(texts, batch_size=32):
             probs = softmax(outputs.logits.cpu().numpy(), axis=1)
             all_probs.extend(probs)
     return np.array(all_probs)
-
 
 # -----------------------------
 # 3. SINGLE TEXT PREDICTION
@@ -156,23 +143,25 @@ def log_flagged_comment(original_text, cleaned_text, match_type, source="single"
             writer.writerow(headers)
         writer.writerow(fields)
 
+# -----------------------------
+# 6. CAPTUM EXPLANATION
+# -----------------------------
 from captum.attr import IntegratedGradients, visualization
-import numpy as np
-import torch
+from captum.attr import visualization as viz
 
-def explain_with_captum(text, model, tokenizer, device):
-    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+def explain_with_captum(text):
+    inputs = bert_tokenizer(text, return_tensors="pt", padding=True, truncation=True)
     input_ids = inputs["input_ids"].to(device)
     attention_mask = inputs["attention_mask"].to(device)
 
     def get_embeddings(input_ids):
-        return model.bert.embeddings.word_embeddings(input_ids)
+        return bert_model.bert.embeddings.word_embeddings(input_ids)
 
     input_embed = get_embeddings(input_ids)
     baseline_embed = torch.zeros_like(input_embed)
 
     def forward_func(embeddings):
-        output = model(inputs_embeds=embeddings, attention_mask=attention_mask)
+        output = bert_model(inputs_embeds=embeddings, attention_mask=attention_mask)
         return torch.softmax(output.logits, dim=1)
 
     with torch.no_grad():
@@ -187,25 +176,22 @@ def explain_with_captum(text, model, tokenizer, device):
         return_convergence_delta=True
     )
 
-    # Convert input IDs to tokens BEFORE using token length
-    tokens = tokenizer.convert_ids_to_tokens(input_ids[0])
+    tokens = bert_tokenizer.convert_ids_to_tokens(input_ids[0])
     tokens = [t for t in tokens if t not in ("[CLS]", "[SEP]")]
 
-    # Sum and normalize attributions
     attributions_sum = attributions.sum(dim=-1).squeeze(0)
-    attributions_sum = attributions_sum[:len(tokens)]  # ✅ Slice to match token count
+    attributions_sum = attributions_sum[:len(tokens)]
     attributions_sum = attributions_sum / torch.norm(attributions_sum)
 
-    vis_data = visualization.VisualizationDataRecord(
+    vis_data = viz.VisualizationDataRecord(
         word_attributions=attributions_sum.detach().cpu().numpy(),
         pred_prob=probs[0][pred_class].item(),
         pred_class=pred_class,
         true_class=pred_class,
         attr_class="Predicted",
         attr_score=attributions_sum.sum().item(),
-        raw_input_ids=tokens,  
+        raw_input_ids=tokens,
         convergence_score=delta.sum().item()
     )
 
-    return visualization.visualize_text([vis_data]).data
-
+    return viz.visualize_text([vis_data])._repr_html_()
