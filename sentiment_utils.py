@@ -53,11 +53,10 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-# -----------------------------
+## -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
 import os
-import requests
 import torch
 import numpy as np
 from transformers import BertForSequenceClassification, AutoTokenizer
@@ -65,54 +64,23 @@ from scipy.special import softmax
 
 # Path to model directory
 bert_model_path = "model/fine_tuned_bert"
-os.makedirs(bert_model_path, exist_ok=True)
 
-# ✅ Google Drive file IDs (ensure these are correct and shared)
-model_files = {
-    "config.json": "1tMmULEYq-_4qak5ZP872MFcJruFKS8-Y",
-    "model.safetensors": "1wbVVMxm3fQHZ16NPcpfSyHNzrBuCDI_M",
-    "tokenizer_config.json": "1I3Q5ylmPNiduWpYikemZaWHKIRJ4CcAI",
-    "vocab.txt": "1DDCgUUv54PchwRYLBXNvZJ6j7yoZYyIB",
-    "special_tokens_map.json": "1x1u9MqcEzH6AyifcakIPSqzAxkHEl21b"
-}
-
-# ✅ Download from Google Drive if file doesn't exist
-def download_file_from_gdrive(file_id, destination):
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        with open(destination, "wb") as f:
-            f.write(response.content)
-        print(f"✅ Downloaded: {destination}")
-    except Exception as e:
-        raise RuntimeError(f"❌ Failed to download {destination}. Error: {e}")
-
-# ✅ Download all required files if not already present
-for filename, file_id in model_files.items():
-    file_path = os.path.join(bert_model_path, filename)
-    if not os.path.exists(file_path):
-        print(f"📦 Downloading {filename}...")
-        download_file_from_gdrive(file_id, file_path)
-
-# ✅ Load the model and tokenizer from the safetensors file
+# ✅ Load the model and tokenizer from GitHub repo (Git LFS)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 try:
     print("📁 Model folder contents:", os.listdir(bert_model_path))
     bert_model = BertForSequenceClassification.from_pretrained(
         bert_model_path,
-        weights_name="model.safetensors",
-        trust_remote_code=True
+        local_files_only=True
     ).to(device)
     bert_tokenizer = AutoTokenizer.from_pretrained(bert_model_path)
 except Exception as e:
     import traceback
-    print("❌ FULL TRACEBACK:\n", traceback.format_exc())  # show full cause
+    print("❌ FULL TRACEBACK:\n", traceback.format_exc())
     raise RuntimeError(f"❌ Failed to load BERT model or tokenizer. Error: {e}")
 
-
-# ✅ Function to predict probabilities for a list of texts
+# ✅ Predict function for a list of texts
 def predict_proba_bert(texts, batch_size=32):
     all_probs = []
     for i in range(0, len(texts), batch_size):
@@ -123,6 +91,7 @@ def predict_proba_bert(texts, batch_size=32):
             probs = softmax(outputs.logits.cpu().numpy(), axis=1)
             all_probs.extend(probs)
     return np.array(all_probs)
+
 
 # -----------------------------
 # 3. SINGLE TEXT PREDICTION
