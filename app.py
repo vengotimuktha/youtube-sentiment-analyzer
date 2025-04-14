@@ -36,7 +36,7 @@ st.set_page_config(page_title="YouTube Sentiment Analyzer (BERT)", layout="wide"
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
-    st.image("assets/logo.png", width=120)
+    st.image("assets/youtube_logo.png", width=120)
     st.markdown("<h1 style='text-align: center;'>YouTube Comment Sentiment Analyzer</h1>", unsafe_allow_html=True)
     st.markdown("""
     <div style='text-align: center; font-size:16px;'>
