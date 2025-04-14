@@ -30,11 +30,16 @@ if "threshold" not in st.session_state:
 
 # ---------------------- PAGE CONFIG ----------------------
 st.set_page_config(page_title="YouTube Sentiment Analyzer (BERT)", layout="wide")
-st.title(" YouTube Comment Sentiment Analyzer")
+
+# --- Logo Image Header ---
+st.image("C:\Project\YouTubeSentimentProject\assets\logo.png", width=150)  # 👈 Make sure to add this image to the 'assets/' folder
+
+st.markdown("<h1 style='margin-top: -10px;'>YouTube Comment Sentiment Analyzer</h1>", unsafe_allow_html=True)
 
 st.markdown("""
 Fine-tuned BERT sentiment classifier with confidence thresholding, **LIME** and **Captum (IG)** explainability, and bad-word moderation logging.
 """)
+
 
 # ---------------------- NAVIGATION ----------------------
 st.sidebar.title(" Navigation: ")
@@ -183,7 +188,7 @@ elif section == "View Moderation Logs":
                 f.write("original_text,cleaned_text,match_type,source,timestamp\n")
             st.success("✅ All logs cleared successfully! Please refresh to see changes.")
     else:
-        st.info("ℹ️ No logs found.")
+        st.info("! No logs found.")
 
 # ---------------------- SETTINGS ----------------------
 elif section == "⚙️ Settings":
