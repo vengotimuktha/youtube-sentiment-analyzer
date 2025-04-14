@@ -142,7 +142,7 @@ elif section == "Batch Upload (.csv)":
 
 # ---------------------- VISUAL ANALYTICS ----------------------
 elif section == "Visual Analytics":
-    st.subheader("📊 Confidence Analysis")
+    st.subheader("Confidence Analysis")
     uploaded_csv = st.file_uploader("Upload a CSV of predictions", type=["csv"], key="viz")
     default_path = os.path.join("data", "Final", "confidence_analysis.csv")
 
@@ -169,7 +169,7 @@ elif section == "Visual Analytics":
 
 # ---------------------- VIEW LOGS ----------------------
 elif section == "View Moderation Logs":
-    st.subheader("📒 Flagged Comments")
+    st.subheader("Flagged Comments")
     log_path = os.path.join("logs", "flagged_comments_log.csv")
 
     if os.path.exists(log_path):
@@ -195,5 +195,5 @@ elif section == "⚙️ Settings":
 # ---------------------- FOOTER ----------------------
 st.markdown("""---  
 Built by Mukthasree Vengoti  
-[🔗 GitHub](https://github.com/vengotimuktha/YouTubeSentimentProject)
+[🔗 GitHub](https://github.com/vengotimuktha/youtube-sentiment-analyzer)
 """)
