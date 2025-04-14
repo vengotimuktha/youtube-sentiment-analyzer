@@ -32,7 +32,7 @@ if "threshold" not in st.session_state:
 st.set_page_config(page_title="YouTube Sentiment Analyzer (BERT)", layout="wide")
 
 # --- Logo Image Header ---
-st.image("C:\Project\YouTubeSentimentProject\assets\logo.png", width=150)  # 👈 Make sure to add this image to the 'assets/' folder
+st.image("assets/logo.png", width=150)  
 
 st.markdown("<h1 style='margin-top: -10px;'>YouTube Comment Sentiment Analyzer</h1>", unsafe_allow_html=True)
 
