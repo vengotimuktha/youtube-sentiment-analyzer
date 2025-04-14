@@ -50,6 +50,8 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
+print("📁 model folder contents:", os.listdir("model/fine_tuned_bert"))
+
 # -----------------------------
 # 2. LOAD BERT MODEL AND TOKENIZER
 # -----------------------------
