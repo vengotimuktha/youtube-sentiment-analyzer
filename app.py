@@ -30,16 +30,7 @@ if "threshold" not in st.session_state:
 
 # ---------------------- PAGE CONFIG ----------------------
 st.set_page_config(page_title="YouTube Sentiment Analyzer (BERT)", layout="wide")
-st.markdown(
-    """
-    <h1 style='display: flex; align-items: center; gap: 10px;'>
-        <img src='https://upload.wikimedia.org/wikipedia/commons/9/9f/Youtube%28amin%29.png' width='40'/>
-        YouTube Comment Sentiment Analyzer (BERT)
-    </h1>
-    """,
-    unsafe_allow_html=True
-)
-
+st.title(" YouTube Comment Sentiment Analyzer")
 
 st.markdown("""
 Fine-tuned BERT sentiment classifier with confidence thresholding, **LIME** and **Captum (IG)** explainability, and bad-word moderation logging.
@@ -56,7 +47,7 @@ section = st.sidebar.radio("Go to:", [
 ])
 
 # ---------------------- SINGLE COMMENT PREDICTION ----------------------
-if section == "🔍 Single Comment Prediction":
+if section == "Single Comment Prediction":
     st.subheader("🔍 Predict Sentiment")
 
     keys = [
