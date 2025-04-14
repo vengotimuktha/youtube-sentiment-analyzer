@@ -200,5 +200,5 @@ elif section == "⚙️ Settings":
 # ---------------------- FOOTER ----------------------
 st.markdown("""---  
 Built by Mukthasree Vengoti  
-[🔗 GitHub](https://github.com/vengotimuktha/youtube-sentiment-analyzer)
+[GitHub](https://github.com/vengotimuktha/youtube-sentiment-analyzer)
 """)
