@@ -29,20 +29,16 @@ if "threshold" not in st.session_state:
     st.session_state.threshold = 0.5
 
 # ---------------------- PAGE CONFIG ----------------------
-# --- Page Config ---
 st.set_page_config(page_title="YouTube Sentiment Analyzer (BERT)", layout="wide")
 
-# --- Centered Logo + Title ---
-col1, col2, col3 = st.columns([1, 2, 1])
+# --- Logo Image Header ---
+st.image("assets/youtube_logo.png", width=150)  
 
-with col2:
-    st.image("assets/youtube_logo.png", width=120)
-    st.markdown("<h1 style='text-align: center;'>YouTube Comment Sentiment Analyzer</h1>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style='text-align: center; font-size:16px;'>
-        Fine-tuned BERT sentiment classifier with confidence thresholding, <b>LIME</b> and <b>Captum (IG)</b> explainability, and bad-word moderation logging.
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown("<h1 style='margin-top: -10px;'>YouTube Comment Sentiment Analyzer</h1>", unsafe_allow_html=True)
+
+st.markdown("""
+Fine-tuned BERT sentiment classifier with confidence thresholding, **LIME** and **Captum (IG)** explainability, and bad-word moderation logging.
+""")
 
 
 # ---------------------- NAVIGATION ----------------------
