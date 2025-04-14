@@ -48,7 +48,7 @@ section = st.sidebar.radio("Go to:", [
 
 # ---------------------- SINGLE COMMENT PREDICTION ----------------------
 if section == "Single Comment Prediction":
-    st.subheader("🔍 Predict Sentiment")
+    st.subheader("Predict Sentiment")
 
     keys = [
         "pred_label", "pred_confidence", "pred_class",
