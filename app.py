@@ -30,27 +30,35 @@ if "threshold" not in st.session_state:
 
 # ---------------------- PAGE CONFIG ----------------------
 st.set_page_config(page_title="YouTube Sentiment Analyzer (BERT)", layout="wide")
-st.title("📺 YouTube Comment Sentiment Analyzer")
+st.markdown(
+    """
+    <h1 style='display: flex; align-items: center; gap: 10px;'>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/9/9f/Youtube%28amin%29.png' width='40'/>
+        YouTube Comment Sentiment Analyzer (BERT)
+    </h1>
+    """,
+    unsafe_allow_html=True
+)
+
 
 st.markdown("""
 Fine-tuned BERT sentiment classifier with confidence thresholding, **LIME** and **Captum (IG)** explainability, and bad-word moderation logging.
 """)
 
 # ---------------------- NAVIGATION ----------------------
-st.sidebar.title("📌 Navigation")
+st.sidebar.title(" Navigation: ")
 section = st.sidebar.radio("Go to:", [
-    "🔍 Single Comment Prediction", 
-    "📂 Batch Upload (.csv)",
-    "📊 Visual Analytics",
-    "🗒️ View Moderation Logs",
-    "⚙️ Settings"
+    "Single Comment Prediction", 
+    "Batch Upload (.csv)",
+    "Visual Analytics",
+    "View Moderation Logs",
+    "Settings"
 ])
 
 # ---------------------- SINGLE COMMENT PREDICTION ----------------------
 if section == "🔍 Single Comment Prediction":
     st.subheader("🔍 Predict Sentiment")
 
-    # Setup default session state
     keys = [
         "pred_label", "pred_confidence", "pred_class",
         "cleaned", "html_plot", "pred_probs"
@@ -59,20 +67,18 @@ if section == "🔍 Single Comment Prediction":
         if k not in st.session_state:
             st.session_state[k] = None
 
-    # --- Clear Logic ---
     def clear_all():
         for k in keys + ["comment_input"]:
             st.session_state[k] = None
         st.rerun()
 
-    # --- Text Area Form ---
     with st.form("comment_form"):
         user_input = st.text_area(
             "Enter YouTube comment:",
             key="comment_input",
             height=100
         )
-        submitted = st.form_submit_button("🔍 Predict Sentiment")
+        submitted = st.form_submit_button(" Predict Sentiment")
 
         if submitted and user_input:
             cleaned = clean_text(user_input)
@@ -86,10 +92,8 @@ if section == "🔍 Single Comment Prediction":
             st.session_state.cleaned = cleaned
             st.session_state.html_plot = None
 
-    # --- Clear Button ---
-    st.button("🧹 Clear Text", on_click=clear_all)
+    st.button("Clear Text", on_click=clear_all)
 
-    # --- Show Results ---
     if st.session_state.pred_label is not None:
         label = st.session_state.pred_label
         confidence = st.session_state.pred_confidence
@@ -104,7 +108,6 @@ if section == "🔍 Single Comment Prediction":
 
         st.info(f"Confidence Score: **{confidence:.2f}**")
 
-        # --- LIME ---
         st.subheader("LIME Explanation")
         def lime_fn(texts):
             return predict_proba_bert([clean_text(t) for t in texts])
@@ -113,9 +116,8 @@ if section == "🔍 Single Comment Prediction":
         )
         st.components.v1.html(exp.as_html(labels=(st.session_state.pred_class,)), height=520, scrolling=True)
 
-        # --- Captum ---
         st.subheader("Captum (Integrated Gradients) Explanation")
-        with st.expander("📉 Show Captum Explanation"):
+        with st.expander("Show Captum Explanation"):
             if st.session_state.html_plot is None:
                 html_plot = explain_with_captum(
                     st.session_state.comment_input, model, tokenizer, device
@@ -124,14 +126,14 @@ if section == "🔍 Single Comment Prediction":
 
             st.components.v1.html(st.session_state.html_plot, height=400, scrolling=True)
             st.download_button(
-                label="📥 Download Captum Report",
+                label="📅 Download Captum Report",
                 data=st.session_state.html_plot,
                 file_name="captum_explanation.html",
                 mime="text/html"
             )
 
 # ---------------------- BATCH PREDICTION ----------------------
-elif section == "📂 Batch Upload (.csv)":
+elif section == "Batch Upload (.csv)":
     st.subheader("📂 Upload CSV")
     uploaded_file = st.file_uploader("Upload a CSV with a 'comment' column", type=["csv"])
 
@@ -141,14 +143,14 @@ elif section == "📂 Batch Upload (.csv)":
         except Exception as e:
             st.error(f"Error: {e}")
         else:
-            st.write("📊 Prediction Results")
+            st.write("Prediction Results")
             output_df = results_df[["comment", "Predicted Label", "Confidence Score"]]
             st.dataframe(output_df)
             csv_data = output_df.to_csv(index=False).encode("utf-8")
-            st.download_button("📥 Download Results", csv_data, "predictions.csv", "text/csv")
+            st.download_button("📅 Download Results", csv_data, "predictions.csv", "text/csv")
 
 # ---------------------- VISUAL ANALYTICS ----------------------
-elif section == "📊 Visual Analytics":
+elif section == "Visual Analytics":
     st.subheader("📊 Confidence Analysis")
     uploaded_csv = st.file_uploader("Upload a CSV of predictions", type=["csv"], key="viz")
     default_path = os.path.join("data", "Final", "confidence_analysis.csv")
@@ -175,26 +177,22 @@ elif section == "📊 Visual Analytics":
     st.pyplot(fig)
 
 # ---------------------- VIEW LOGS ----------------------
-elif section == "🗒️ View Moderation Logs":
-    st.subheader("🗒️ Flagged Comments")
+elif section == "View Moderation Logs":
+    st.subheader("📒 Flagged Comments")
     log_path = os.path.join("logs", "flagged_comments_log.csv")
 
     if os.path.exists(log_path):
         logs_df = pd.read_csv(log_path)
         st.dataframe(logs_df)
 
-        # Download button
-        st.download_button("📥 Download Logs", logs_df.to_csv(index=False).encode("utf-8"), "flagged_logs.csv")
+        st.download_button("📅 Download Logs", logs_df.to_csv(index=False).encode("utf-8"), "flagged_logs.csv")
 
-        # Clear logs
-        if st.button("🧹 Clear All Logs"):
+        if st.button("🩹 Clear All Logs"):
             with open(log_path, "w", encoding="utf-8") as f:
                 f.write("original_text,cleaned_text,match_type,source,timestamp\n")
             st.success("✅ All logs cleared successfully! Please refresh to see changes.")
     else:
         st.info("ℹ️ No logs found.")
-
-
 
 # ---------------------- SETTINGS ----------------------
 elif section == "⚙️ Settings":
