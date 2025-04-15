@@ -22,18 +22,18 @@ YouTubeSentimentProject
   ─ assets
      ─ logo.png                
   ─ data
-    ─ Final
-        ── bad_words.txt
-        ── bad_words_regex.txt
-        ── confidence_analysis.csv
- ── logs
-    └── flagged_comments_log.csv
-── notebooks
-   └── Youtube_Sentiment_Analysis.ipynb
-── Dockerfile                  
-── requirements.txt
-── .gitignore
-── README.md
+     ─ Final
+         ── bad_words.txt
+         ── bad_words_regex.txt
+         ── confidence_analysis.csv
+ ─ logs
+   ─ flagged_comments_log.csv
+─ notebooks
+   ─ Youtube_Sentiment_Analysis.ipynb
+─ Dockerfile                  
+─ requirements.txt
+─ .gitignore
+─ README.md
 
 ---
 
