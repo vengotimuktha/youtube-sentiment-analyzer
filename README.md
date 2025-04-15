@@ -1,117 +1,236 @@
-<<<<<<< HEAD
-# YouTube Comment Sentiment & Engagement Analyzer
+# YouTube Comment Sentiment Analyzer 
 
-This project is an end-to-end sentiment analysis and content moderation system built using YouTube comments. As an individual Master's student in Data Science, I designed and developed this solution to explore real-world NLP use cases, model interpretability, and scalable deployment using Docker and Streamlit.
+A production-grade, explainable NLP system built to classify YouTube comments into **Positive**, **Neutral**, or **Negative** sentiments using a fine-tuned BERT model. Features include **LIME**, **Captum (Integrated Gradients)**, and a **moderation layer**. Deployed via **Streamlit Cloud** and Docker for scalable public access.
 
----
-
-## 🎯 Project Objective
-
-To build a robust, interpretable sentiment classification system for YouTube comments using advanced Natural Language Processing (NLP) and Machine Learning (ML) techniques, combined with moderation and explainability features.
+🔗 **Live App**: [https://youtube--sentiment--analyzer.streamlit.app](https://youtube--sentiment--analyzer.streamlit.app)
 
 ---
 
-## 🧠 Features & Capabilities
+## Project Overview
 
-- ✅ Fine-tuned BERT model (`bert-base-uncased`) with backtranslation data
-- ✅ PCA for dimensionality reduction
-- ✅ Sentiment classification: **Positive**, **Negative**, **Neutral**
-- ✅ Rule-based override for moderation (bad word detection)
-- ✅ SHAP, LIME, and Captum (Integrated Gradients) explainability
-- ✅ Confidence scores, threshold tuning, ROC & PR curves
-- ✅ Single comment or batch `.csv` upload prediction
-- ✅ Dockerized and deployed via Streamlit UI
+This project bridges real-world sentiment analysis with explainability and responsible AI. It analyzes YouTube comments fetched using the Google Cloud YouTube Data API and presents predictions with explainability visualizations, moderation logging, and confidence control.
 
 ---
 
-## 📁 Project Structure
+## 📂Project Structure
 
-YouTubeSentimentProject/ │ ├── app.py # Streamlit UI ├── sentiment_utils.py # Model, prediction, explainability ├── Dockerfile # Docker build config ├── requirements.txt # Python dependencies ├── README.md # You're reading it now │ ├── model/ # Fine-tuned BERT model ├── data/ # Input/cleaned/test CSVs ├── notebook/ # Jupyter notebook experiments ├── assets/ # Custom visuals (optional) ├── logs/ # Logged moderation cases ├── captum_env/ # Captum integrated gradients ├── test/ # Test case
-
-
-
----
-
-## 📊 Model & Evaluation
-
-- **Embedding**: `all-mpnet-base-v2` from `SentenceTransformers`
-- **Class Balancing**: SMOTE & Backtranslation (English → French → English)
-- **Classifiers Tried**:
-  - Logistic Regression
-  - XGBoost
-  - BERT + PCA + XGBoost
-  - **Final**: Fine-tuned BERT on backtranslated data
-- **Evaluation**:
-  - Confusion Matrix
-  - ROC Curve per class
-  - Precision-Recall Curve per class
-  - Threshold tuning and confidence-based filtering
-
----
-
-## 🛡️ Moderation Layer
-
-A rule-based override checks all incoming comments against a 1000+ bad words list (exact + regex matches). If a match is found, the comment is **force-classified as Negative** and logged for audit.
+YouTubeSentimentProject/
+├── app.py                       # Streamlit UI logic
+├── sentiment_utils.py          # BERT inference, LIME, Captum, logging
+├── model/
+│   └── fine_tuned_bert/        # Fine-tuned BERT model + tokenizer files
+├── assets/
+│   └── logo.png                # Logo for UI header
+├── data/
+│   └── Final/
+│       ├── bad_words.txt
+│       ├── bad_words_regex.txt
+│       └── confidence_analysis.csv
+├── logs/
+│   └── flagged_comments_log.csv
+├── notebooks/
+│   └── Youtube_Sentiment_Analysis.ipynb
+├── Dockerfile                  # Containerization for AWS EC2
+├── requirements.txt
+├── .gitignore
+└── README.md
 
 ---
 
-## 🧠 Explainability
+## Features
 
-To ensure model transparency and interpretability, the app integrates:
-
-- **SHAP**: Global feature importance for BERT embeddings
-- **LIME**: Local explanations with color-coded word highlights
-- **Captum (Integrated Gradients)**: Token-level attribution in HTML format
+- Fine-tuned BERT (`bert-base-uncased`)
+- English → French → English backtranslation for class balancing
+- LIME & Captum explainability integration
+- SHAP (for benchmarking with XGBoost)
+- Rule-based moderation system (keyword + regex)
+- Real-time Streamlit dashboard with:
+  - Single + Batch prediction
+  - Confidence thresholding
+  - LIME + Captum download options
+- Flagged comment logging with timestamps
+- Docker and Streamlit Cloud deployment
 
 ---
 
-## 🐳 Deployment
+## Demo Screenshots
 
-This project is fully containerized using Docker:
+| Single Prediction | LIME Explanation | Captum IG |
+|-------------------|------------------|-----------|
+| ![UI](assets/streamlit_ui.png) | ![LIME](assets/lime_explanation.png) | ![Captum](assets/captum_explanation.png) |
+
+---
+
+## Data Collection
+
+- Extracted using **YouTube Data API v3**
+- 10 public videos across genres: Education, Music, News, Public Policy
+- 1500–2000 total comments fetched
+- Preprocessing includes:
+  - Lowercasing
+  - URL/emoji/punctuation removal
+  - Regex cleaning
+  - English-only filtering
+
+---
+
+## ⚖️ Class Imbalance Handling
+
+| Technique           | Performance         |
+|---------------------|---------------------|
+| Raw (Imbalanced)    | Biased results    |
+| Class Weights       | Minor improvement |
+| SMOTE Oversampling  | Moderate boost    |
+| **Backtranslation** | Best performance (final choice) |
+
+---
+
+## Model Architecture
+
+| Model                      | Accuracy | F1-Score |
+|---------------------------|----------|----------|
+| Logistic Regression (TF-IDF) | 0.71     | 0.68     |
+| XGBoost (TF-IDF)          | 0.74     | 0.71     |
+| BERT + PCA + XGBoost      | 0.81     | 0.79     |
+| **Fine-tuned BERT**       | **0.88** | **0.88** |
+
+- Tokenizer: `bert-base-uncased`
+- Max Length: 256
+- Optimizer: AdamW (`lr=2e-5`)
+- Epochs: 4
+- Evaluation: Accuracy, Precision, Recall, F1
+
+---
+
+## Explainability
+
+- **SHAP**: For benchmarking insights (XGBoost + BERT embeddings)
+- **LIME**: Token-level HTML visual explanations for BERT predictions
+- **Captum (Integrated Gradients)**: Gradient-based attributions visualized and downloadable
+
+---
+
+## Moderation Layer
+
+- Uses `bad_words.txt` (1000+ terms)
+- Uses `bad_words_regex.txt` (for masked profanities like `f##k`, `s**t`)
+- Moderation Logic:
+  - Auto-overrides model predictions to `Negative`
+  - Logs flagged comments with metadata
+  - Exportable via `flagged_comments_log.csv`
+
+---
+
+## Streamlit Dashboard Features
+
+- Single comment prediction
+- Batch CSV upload with predictions
+- Confidence threshold adjustment slider
+- LIME & Captum explainability (with HTML export)
+- CSV export: Predictions + Moderation logs
+- Real-time moderation override + logging
+
+🔗 **Try it Live:** [https://youtube--sentiment--analyzer.streamlit.app](https://youtube--sentiment--analyzer.streamlit.app)
+
+---
+
+## Deployment Options
+This app is designed for both lightweight demos and enterprise-level deployment.
+
+### Streamlit Cloud
+- Simple, shareable public deployment
+- GitHub integration (auto-pull on push)
+- Model files stored via Git LFS
+- Used for resume, LinkedIn, and showcase
+
+### Docker + AWS EC2
+- Dockerfile with all dependencies
+- Deployed on EC2 Ubuntu instance
+- Accessible via public IP
+- Future-proof: supports CI/CD workflows
+
+---
+
+## Installation Guide
+
+### Run Locally (Dev)
 
 ```bash
-docker build -t youtube-sentiment-app .
-docker run -p 8501:8501 youtube-sentiment-app
+git clone https://github.com/vengotimuktha/youtube-sentiment-analyzer.git
+cd youtube-sentiment-analyzer
+pip install -r requirements.txt
+streamlit run app.py
+
+```
+## Notebook & Research
+
+The core notebook [`Youtube_Sentiment_Analysis.ipynb`](notebooks/Youtube_Sentiment_Analysis.ipynb) contains:
+
+- Data preprocessing pipeline  
+- Class balancing comparisons (Raw, SMOTE, Weights, Backtranslation)  
+- Model benchmarking (LogReg, XGBoost, BERT variants)  
+- SHAP summary plots  
+- Confusion matrix, ROC & PR curves  
+- Threshold tuning for deployment  
+
+---
+
+## Research Paper
+
+This project is supported by a detailed **IEEE-style research paper** covering:
+
+- End-to-end methodology and benchmarking  
+- Class imbalance techniques (SMOTE, Backtranslation)  
+- Fine-tuned BERT model training & export  
+- Explainability integration: SHAP, LIME, Captum  
+- Moderation layer logic and rule-based overrides  
+- Real-world deployment using Docker + Streamlit Cloud  
+
+**Download**: [`YouTube_Sentiment_Analysis___Research_Paper.pdf`](YouTube_Sentiment_Analysis___Research_Paper.pdf)
+
+---
+
+##  Testing Tips
+
+Want to test the app?
+
+- Upload a CSV with a `comment` column for **Batch Predictions**  
+- Use the **confidence slider** to tune model sensitivity  
+- Try entering offensive keywords (e.g., “s\*\*t”) to trigger moderation  
+- Download all predictions and Captum HTML report  
+- Clear logs or inspect moderation CSV from within the app  
+
+---
 
 
-📄 Research Contribution
-This project is also documented as a research paper titled:
-“Building an Interpretable and Scalable BERT-Based Sentiment Analysis System for YouTube Comments with Explainability and Moderation Features”
+---
 
-It includes:
+## 👨‍💻 Author
 
-Model comparisons
+**Mukthasree Vengoti**  
+🎓 Master’s in Data Science, Kent State University  
+📧 mvengoti@kent.edu  
+🌐 [LinkedIn](https://www.linkedin.com/in/...)  
+💻 [GitHub](https://github.com/vengotimuktha)
 
-Dataset statistics
+---
 
-Screenshot illustrations
+## License
 
-Evaluation metrics
+This project is licensed under the **MIT License**.  
+See [`LICENSE`](LICENSE) for full details.
 
-Explainability snapshots
+---
 
-Deployment pipeline
+##  Acknowledgements
 
-🧑‍💻 About Me
-I’m currently pursuing my Master's in Data Science and working independently on real-world projects with the aim of joining a leading tech company as a Data Scientist. This project was built to demonstrate my:
+Special thanks to the developers and maintainers of:
 
-Problem-solving skills
-
-Research-backed model experimentation
-
-Proficiency in NLP and ML pipelines
-
-Real-time app deployment experience
-
-🤝 Contact
-Feel free to connect or collaborate:
-
-Email: [your email here]
-
-LinkedIn: [your LinkedIn URL]
-
-Research Paper: [add Overleaf link if public]
-
-=======
-# youtube-sentiment-analyzer
->>>>>>> 8535f76a351cdca150c4d666e5848deb206a28b7
+- Hugging Face Transformers  
+- SHAP by Scott Lundberg  
+- Captum by Meta AI  
+- LIME by Marco Ribeiro  
+- Streamlit & Streamlit Cloud  
+- Google Cloud YouTube Data API  
+- Docker  
+- Backtranslation techniques for NLP augmentation  
