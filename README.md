@@ -12,9 +12,33 @@ This project bridges real-world sentiment analysis with explainability and respo
 
 ---
 
-## 📂Project Structure
+## 📁 Project Structure
 
-<pre> ```bash YouTubeSentimentProject/ ├── app.py # Streamlit frontend (main dashboard) ├── sentiment_utils.py # Core backend logic and model utilities ├── Dockerfile # Docker config for containerized deployment ├── requirements.txt # Python dependencies ├── .gitignore # Files/folders to ignore in Git ├── README.md # Project README │ ├── model/ │ └── fine_tuned_bert/ # Saved fine-tuned BERT model (bin, config, tokenizer) │ ├── assets/ │ ├── logo.png │ ├── streamlit_ui.png │ ├── lime_explanation.png │ └── captum_explanation.png │ ├── data/ │ └── Final/ │ ├── bad_words.txt │ ├── bad_words_regex.txt │ └── confidence_analysis.csv │ ├── logs/ │ └── flagged_comments_log.csv │ └── notebooks/ └── Youtube_Sentiment_Analysis.ipynb ``` </pre>
+- `app.py` – Streamlit dashboard (UI)
+- `sentiment_utils.py` – Model logic, preprocessing, moderation
+- `Dockerfile` – Docker deployment setup
+- `requirements.txt` – Python dependencies
+- `.gitignore` – Files to ignore in Git
+- `README.md` – Project description
+
+- `model/`
+  - `fine_tuned_bert/` – BERT model + tokenizer
+
+- `assets/`
+  - `logo.png` – Dashboard logo
+  - `streamlit_ui.png`, `lime_explanation.png`, `captum_explanation.png` – UI screenshots
+
+- `data/Final/`
+  - `bad_words.txt` – Direct bad word list
+  - `bad_words_regex.txt` – Regex-based patterns
+  - `confidence_analysis.csv` – Used for visual analytics
+
+- `logs/`
+  - `flagged_comments_log.csv` – All flagged toxic comments
+
+- `notebooks/`
+  - `Youtube_Sentiment_Analysis.ipynb` – Full training + evaluation notebook
+
 ---
 
 ## Features
