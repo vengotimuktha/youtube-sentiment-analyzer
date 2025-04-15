@@ -15,12 +15,12 @@ This project bridges real-world sentiment analysis with explainability and respo
 ## 📂Project Structure
 
 YouTubeSentimentProject/
-├── app.py                       # Streamlit UI logic
-├── sentiment_utils.py          # BERT inference, LIME, Captum, logging
-├── model/
-│   └── fine_tuned_bert/        # Fine-tuned BERT model + tokenizer files
+  ─ app.py                       
+  ─ sentiment_utils.py          
+  ── model/
+│   └── fine_tuned_bert/        
 ├── assets/
-│   └── logo.png                # Logo for UI header
+│   └── logo.png                
 ├── data/
 │   └── Final/
 │       ├── bad_words.txt
