@@ -12,7 +12,7 @@ This project bridges real-world sentiment analysis with explainability and respo
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 - `app.py` – Streamlit dashboard (UI)
 - `sentiment_utils.py` – Model logic, preprocessing, moderation
@@ -208,13 +208,13 @@ Want to test the app?
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Mukthasree Vengoti**  
-🎓 Master’s in Data Science, Kent State University  
-📧 mvengoti@kent.edu  
-🌐 [LinkedIn](https://www.linkedin.com/in/...)  
-💻 [GitHub](https://github.com/vengotimuktha)
+ Master’s in Data Science, Kent State University  
+ mukthasree.vengoti@gmail.com 
+ [LinkedIn](https://www.linkedin.com/in/mukthasree-vengoti/)  
+ [GitHub](https://github.com/vengotimuktha)
 
 ---
 
