@@ -57,7 +57,7 @@ YouTubeSentimentProject/
 
 | Single Prediction | LIME Explanation | Captum IG |
 |-------------------|------------------|-----------|
-| ![UI](assets/streamlit_ui.png) | ![LIME](assets/lime_explanation.png) | ![Captum](assets/captum_explanation.png) |
+| ![UI]streamlit_ui.png) | ![LIME](lime_explanation.png) | ![Captum](captum_explanation.png) |
 
 ---
 
