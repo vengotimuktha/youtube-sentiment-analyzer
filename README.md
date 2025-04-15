@@ -163,7 +163,7 @@ streamlit run app.py
 ```
 ## Notebook & Research
 
-The core notebook [`Youtube_Sentiment_Analysis.ipynb`](notebooks/Youtube_Sentiment_Analysis.ipynb) contains:
+The core notebook [`Youtube_Sentiment_Analysis.ipynb`](Youtube_Sentiment_Analysis.ipynb) contains:
 
 - Data preprocessing pipeline  
 - Class balancing comparisons (Raw, SMOTE, Weights, Backtranslation)  
