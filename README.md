@@ -54,10 +54,9 @@ YouTubeSentimentProject/
 ---
 
 ## Demo Screenshots
-
 | Single Prediction | LIME Explanation | Captum IG |
 |-------------------|------------------|-----------|
-| ![UI]streamlit_ui.png) | ![LIME](lime_explanation.png) | ![Captum](captum_explanation.png) |
+| ![UI](assets/streamlit_ui.png) | ![LIME](assets/lime_explanation.png) | ![Captum](assets/captum_explanation.png) |
 
 ---
 
@@ -234,3 +233,8 @@ Special thanks to the developers and maintainers of:
 - Google Cloud YouTube Data API  
 - Docker  
 - Backtranslation techniques for NLP augmentation  
+
+
+---
+
+Let me know if you want this saved directly into a `README.md` file or added to your GitHub repo via a push command.
