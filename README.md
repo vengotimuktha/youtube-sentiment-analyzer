@@ -14,8 +14,7 @@ This project bridges real-world sentiment analysis with explainability and respo
 
 ## 📂Project Structure
 
-YouTubeSentimentProject/ ├── app.py # Streamlit frontend (main dashboard) ├── sentiment_utils.py # Core backend logic and model utilities ├── Dockerfile # Docker config for containerized deployment ├── requirements.txt # Python dependencies ├── .gitignore # Files/folders to ignore in Git ├── README.md # Project README │ ├── model/ │ └── fine_tuned_bert/ # Saved fine-tuned BERT model (pytorch_model.bin, tokenizer, etc.) │ ├── assets/ │ └── logo.png # Logo/image for dashboard UI │ └── streamlit_ui.png # UI screenshot │ └── lime_explanation.png # LIME visualization screenshot │ └── captum_explanation.png # Captum visualization screenshot │ ├── data/ │ └── Final/ │ ├── bad_words.txt # Word-level bad word list (for exact match) │ ├── bad_words_regex.txt # Regex-based bad word patterns │ └── confidence_analysis.csv # CSV of predictions + confidence for analytics │ ├── logs/ │ └── flagged_comments_log.csv # Logged toxic comments with metadata │ └── notebooks/ └── Youtube_Sentiment_Analysis.ipynb # Development + training notebook
-
+<pre> ```bash YouTubeSentimentProject/ ├── app.py # Streamlit frontend (main dashboard) ├── sentiment_utils.py # Core backend logic and model utilities ├── Dockerfile # Docker config for containerized deployment ├── requirements.txt # Python dependencies ├── .gitignore # Files/folders to ignore in Git ├── README.md # Project README │ ├── model/ │ └── fine_tuned_bert/ # Saved fine-tuned BERT model (bin, config, tokenizer) │ ├── assets/ │ ├── logo.png │ ├── streamlit_ui.png │ ├── lime_explanation.png │ └── captum_explanation.png │ ├── data/ │ └── Final/ │ ├── bad_words.txt │ ├── bad_words_regex.txt │ └── confidence_analysis.csv │ ├── logs/ │ └── flagged_comments_log.csv │ └── notebooks/ └── Youtube_Sentiment_Analysis.ipynb ``` </pre>
 ---
 
 ## Features
