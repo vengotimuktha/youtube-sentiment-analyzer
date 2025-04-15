@@ -185,7 +185,7 @@ This project is supported by a detailed **IEEE-style research paper** covering:
 - Moderation layer logic and rule-based overrides  
 - Real-world deployment using Docker + Streamlit Cloud  
 
-**Download**: [`YouTube_Sentiment_Analysis___Research_Paper.pdf`](YouTube_Sentiment_Analysis___Research_Paper.pdf)
+**Download**: [`YouTube_Sentiment_Analysis___Research_Paper.pdf`](YouTube_Sentiment_Analysis-Research_Paper.pdf)
 
 ---
 
