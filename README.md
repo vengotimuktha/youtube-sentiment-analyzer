@@ -189,7 +189,7 @@ This project is supported by a detailed **IEEE-style research paper** covering:
 - Moderation layer logic and rule-based overrides  
 - Real-world deployment using Docker + Streamlit Cloud  
 
-**Download**: [`YouTube_Sentiment_Analysis___Research_Paper.pdf`](YouTube_Sentiment_Analysis-Research_Paper.pdf)
+**Download**: [`Building_an_Interpretable_and_Scalable_BERT_Based_Sentiment_Analysis_System_for_YouTube_Comments_with_Explainability_and_Moderation_Features.pdf`](Building_an_Interpretable_and_Scalable_BERT_Based_Sentiment_Analysis_System_for_YouTube_Comments_with_Explainability_and_Moderation_Features.pdf)
 
 ---
 
