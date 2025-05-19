@@ -180,7 +180,7 @@ The core notebook [`Youtube_Sentiment_Analysis.ipynb`](Youtube_Sentiment_Analysi
 
 ## Research Paper
 
-This project is supported by a detailed **IEEE-style research paper** covering:
+This project submitted technical research to **IEEE Big Data 2025** covering:
 
 - End-to-end methodology and benchmarking  
 - Class imbalance techniques (SMOTE, Backtranslation)  
