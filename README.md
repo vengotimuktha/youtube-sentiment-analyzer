@@ -58,9 +58,16 @@ This project bridges real-world sentiment analysis with explainability and respo
 ---
 
 ## Demo Screenshots
-| Single Prediction | LIME Explanation | Captum IG |
-|-------------------|------------------|-----------|
-| ![UI](assets/streamlit_ui.png) | ![LIME](assets/lime_explanation.png) | ![Captum](assets/captum_explanation.png) |
+
+### 🔹 Single Prediction UI
+![UI](assets/streamlit_ui.png)
+
+### 🔹 LIME Explanation
+![LIME](assets/lime_explanation.png)
+
+### 🔹 Captum Integrated Gradients
+![Captum](assets/captum_explanation.png)
+
 
 ---
 
